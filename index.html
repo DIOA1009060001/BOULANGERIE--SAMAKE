@@ -12,7 +12,7 @@
 
 <meta name="theme-color" content="#17251D">
 
-<title>SAMAKE COMMANDES | Boulangerie</title>
+<title>SAMAKE COMMANDES</title>
 
 <style>
 
@@ -24,7 +24,7 @@ body{
 
  background:#f5f5f0;color:#222;
 
- padding-bottom:35px
+ padding-bottom:30px
 
 }
 
@@ -32,7 +32,7 @@ header{
 
  background:#17251D;color:white;
 
- padding:28px 18px;text-align:center;
+ padding:25px 16px;text-align:center;
 
  border-bottom:5px solid #E7B957
 
@@ -40,7 +40,7 @@ header{
 
 .logo{font-size:42px}
 
-header h1{font-size:25px;margin:10px 0}
+header h1{font-size:25px;margin:8px}
 
 header p{color:#E7B957;font-size:13px}
 
@@ -72,6 +72,24 @@ input,textarea{
 
 input:focus,textarea:focus{border-color:#b58b36}
 
+.datetime{
+
+ background:#f4f0e5;border-radius:12px;
+
+ padding:15px;margin-bottom:16px;
+
+ display:flex;justify-content:space-between;
+
+ gap:10px;flex-wrap:wrap
+
+}
+
+.datetime div{flex:1;min-width:120px}
+
+.datetime small{display:block;color:#777;margin-bottom:6px}
+
+.datetime strong{font-size:16px;color:#17251D}
+
 .product{
 
  display:flex;justify-content:space-between;
@@ -82,17 +100,11 @@ input:focus,textarea:focus{border-color:#b58b36}
 
 }
 
-.product:last-child{border:0}
-
 .product strong{font-size:15px}
 
 .product small{display:block;color:#888;margin-top:4px}
 
-.quantity{
-
- display:flex;align-items:center;gap:9px
-
-}
+.quantity{display:flex;align-items:center;gap:9px}
 
 .quantity button{
 
@@ -116,29 +128,21 @@ input:focus,textarea:focus{border-color:#b58b36}
 
  background:#f4f0e5;padding:17px;
 
- border-radius:12px;text-align:center;
-
- margin-top:12px
+ border-radius:12px;text-align:center;margin-top:12px
 
 }
 
-.total strong{font-size:26px;color:#17251D}
+.total strong{font-size:27px;color:#17251D}
 
 .send{
 
- width:100%;padding:17px;
+ width:100%;padding:17px;border:0;
 
- border:0;border-radius:11px;
+ border-radius:11px;background:#168b49;
 
- background:#168b49;color:white;
-
- font-size:17px;font-weight:bold;
-
- cursor:pointer
+ color:white;font-size:16px;font-weight:bold
 
 }
-
-.send:active{transform:scale(.98)}
 
 .reset{
 
@@ -168,7 +172,7 @@ footer{text-align:center;color:#888;font-size:12px;margin-top:25px}
 
  <p style="color:white;margin-top:10px">
 
- Commandez facilement vos produits
+ Espace de commande des livreurs
 
  </p>
 
@@ -176,21 +180,41 @@ footer{text-align:center;color:#888;font-size:12px;margin-top:25px}
 
 <main class="container">
 
+ <section class="datetime">
+
+  <div>
+
+   <small>📅 DATE DU JOUR</small>
+
+   <strong id="date">--/--/----</strong>
+
+  </div>
+
+  <div>
+
+   <small>🕒 HEURE ACTUELLE</small>
+
+   <strong id="heure">--:--:--</strong>
+
+  </div>
+
+ </section>
+
  <section class="card">
 
   <h2>👤 Informations du livreur</h2>
 
-  <label>Nom du livreur</label>
+  <label>Nom du livreur *</label>
 
   <input id="livreur" type="text"
 
    placeholder="Entrez votre nom">
 
-  <label>Numéro du livreur (facultatif)</label>
+  <label>Numéro de téléphone (facultatif)</label>
 
   <input id="telephone" type="tel"
 
-   placeholder="Votre numéro de téléphone">
+   placeholder="Votre numéro">
 
  </section>
 
@@ -222,19 +246,19 @@ footer{text-align:center;color:#888;font-size:12px;margin-top:25px}
 
   <textarea id="observation" rows="3"
 
-   placeholder="Précisions sur votre commande (facultatif)"></textarea>
+   placeholder="Précisions (facultatif)"></textarea>
 
  </section>
 
  <button class="send" onclick="envoyerCommande()">
 
-  🟢 ENVOYER MA COMMANDE SUR WHATSAPP
+  🟢 ENVOYER AU COMMIS SUR WHATSAPP
 
  </button>
 
  <button class="reset" onclick="reinitialiser()">
 
-  Réinitialiser la commande
+  ↻ NOUVELLE COMMANDE
 
  </button>
 
@@ -250,7 +274,7 @@ footer{text-align:center;color:#888;font-size:12px;margin-top:25px}
 
 <script>
 
-const produits = [
+const produits=[
 
  {nom:"Pain baguette",emoji:"🥖"},
 
@@ -264,7 +288,43 @@ const produits = [
 
 ];
 
-const liste = document.getElementById("products");
+// Date et heure en Côte d'Ivoire
+
+function actualiserHorloge(){
+
+ const maintenant=new Date();
+
+ const date=new Intl.DateTimeFormat("fr-FR",{
+
+  timeZone:"Africa/Abidjan",
+
+  day:"2-digit",month:"2-digit",year:"numeric"
+
+ }).format(maintenant);
+
+ const heure=new Intl.DateTimeFormat("fr-FR",{
+
+  timeZone:"Africa/Abidjan",
+
+  hour:"2-digit",minute:"2-digit",second:"2-digit",
+
+  hour12:false
+
+ }).format(maintenant);
+
+ document.getElementById("date").textContent=date;
+
+ document.getElementById("heure").textContent=heure;
+
+}
+
+actualiserHorloge();
+
+setInterval(actualiserHorloge,1000);
+
+// Création du catalogue
+
+const liste=document.getElementById("products");
 
 produits.forEach((p,i)=>{
 
@@ -286,9 +346,9 @@ produits.forEach((p,i)=>{
 
    <button type="button" onclick="changer(${i},-1)">−</button>
 
-   <input id="q${i}" type="number" min="0"
+   <input id="q${i}" type="number" min="0" value="0"
 
-    value="0" onchange="verifier(${i})">
+    onchange="verifier(${i})">
 
    <button type="button" onclick="changer(${i},1)">+</button>
 
@@ -300,7 +360,7 @@ produits.forEach((p,i)=>{
 
 function verifier(i){
 
- let champ=document.getElementById("q"+i);
+ const champ=document.getElementById("q"+i);
 
  let valeur=parseInt(champ.value);
 
@@ -314,7 +374,7 @@ function verifier(i){
 
 function changer(i,sens){
 
- let champ=document.getElementById("q"+i);
+ const champ=document.getElementById("q"+i);
 
  let valeur=parseInt(champ.value)||0;
 
@@ -350,13 +410,13 @@ function envoyerCommande(){
 
  if(!nom){
 
-  alert("Veuillez renseigner votre nom.");
+  alert("Veuillez renseigner le nom du livreur.");
 
   return;
 
  }
 
- let total=calculer();
+ const total=calculer();
 
  if(total===0){
 
@@ -366,7 +426,27 @@ function envoyerCommande(){
 
  }
 
- let date=new Date().toLocaleString("fr-FR");
+ // Date et heure exactes au moment de la validation
+
+ const maintenant=new Date();
+
+ const date=new Intl.DateTimeFormat("fr-FR",{
+
+  timeZone:"Africa/Abidjan",
+
+  day:"2-digit",month:"2-digit",year:"numeric"
+
+ }).format(maintenant);
+
+ const heure=new Intl.DateTimeFormat("fr-FR",{
+
+  timeZone:"Africa/Abidjan",
+
+  hour:"2-digit",minute:"2-digit",second:"2-digit",
+
+  hour12:false
+
+ }).format(maintenant);
 
  let message=
 
@@ -380,13 +460,15 @@ function envoyerCommande(){
 
  📅 Date : ${date}
 
+ 🕒 Heure : ${heure}
+
  *DÉTAIL DE LA COMMANDE :*
 
  `;
 
  produits.forEach((p,i)=>{
 
-  let q=parseInt(document.getElementById("q"+i).value)||0;
+  const q=parseInt(document.getElementById("q"+i).value)||0;
 
   if(q>0){
 
@@ -404,13 +486,13 @@ function envoyerCommande(){
 
  }
 
- message+="\n\nMerci de préparer cette commande.";
+ message+=`\n\nMerci de préparer cette commande.`;
 
  const numero="2250564369543";
 
  const url="https://wa.me/"+numero+"?text="+encodeURIComponent(message);
 
- window.open(url,"_blank");
+ window.location.href=url;
 
 }
 
@@ -429,6 +511,8 @@ function reinitialiser(){
  });
 
  calculer();
+
+ window.scrollTo({top:0,behavior:"smooth"});
 
 }
 
