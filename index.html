@@ -1,0 +1,439 @@
+
+
+<!DOCTYPE html>
+
+<html lang="fr">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="theme-color" content="#17251D">
+
+<title>SAMAKE COMMANDES | Boulangerie</title>
+
+<style>
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+
+ font-family:Arial,sans-serif;
+
+ background:#f5f5f0;color:#222;
+
+ padding-bottom:35px
+
+}
+
+header{
+
+ background:#17251D;color:white;
+
+ padding:28px 18px;text-align:center;
+
+ border-bottom:5px solid #E7B957
+
+}
+
+.logo{font-size:42px}
+
+header h1{font-size:25px;margin:10px 0}
+
+header p{color:#E7B957;font-size:13px}
+
+.container{max-width:650px;margin:20px auto;padding:0 15px}
+
+.card{
+
+ background:white;padding:18px;
+
+ border-radius:15px;margin-bottom:16px;
+
+ box-shadow:0 3px 12px #0000000c
+
+}
+
+h2{font-size:18px;margin-bottom:15px;color:#17251D}
+
+label{display:block;font-weight:bold;font-size:14px;margin-bottom:7px}
+
+input,textarea{
+
+ width:100%;padding:13px;
+
+ border:1px solid #ddd;border-radius:9px;
+
+ font-size:15px;outline:none;margin-bottom:15px
+
+}
+
+input:focus,textarea:focus{border-color:#b58b36}
+
+.product{
+
+ display:flex;justify-content:space-between;
+
+ align-items:center;gap:10px;
+
+ padding:13px 0;border-bottom:1px solid #eee
+
+}
+
+.product:last-child{border:0}
+
+.product strong{font-size:15px}
+
+.product small{display:block;color:#888;margin-top:4px}
+
+.quantity{
+
+ display:flex;align-items:center;gap:9px
+
+}
+
+.quantity button{
+
+ width:34px;height:34px;border:0;
+
+ background:#17251D;color:white;
+
+ border-radius:8px;font-size:20px
+
+}
+
+.quantity input{
+
+ width:48px;text-align:center;
+
+ padding:8px 3px;margin:0
+
+}
+
+.total{
+
+ background:#f4f0e5;padding:17px;
+
+ border-radius:12px;text-align:center;
+
+ margin-top:12px
+
+}
+
+.total strong{font-size:26px;color:#17251D}
+
+.send{
+
+ width:100%;padding:17px;
+
+ border:0;border-radius:11px;
+
+ background:#168b49;color:white;
+
+ font-size:17px;font-weight:bold;
+
+ cursor:pointer
+
+}
+
+.send:active{transform:scale(.98)}
+
+.reset{
+
+ width:100%;padding:13px;margin-top:10px;
+
+ border:1px solid #ddd;background:white;
+
+ border-radius:10px;font-weight:bold
+
+}
+
+footer{text-align:center;color:#888;font-size:12px;margin-top:25px}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+ <div class="logo">🥖</div>
+
+ <h1>SAMAKE COMMANDES</h1>
+
+ <p>BOULANGERIE SAMAKE</p>
+
+ <p style="color:white;margin-top:10px">
+
+ Commandez facilement vos produits
+
+ </p>
+
+</header>
+
+<main class="container">
+
+ <section class="card">
+
+  <h2>👤 Informations du livreur</h2>
+
+  <label>Nom du livreur</label>
+
+  <input id="livreur" type="text"
+
+   placeholder="Entrez votre nom">
+
+  <label>Numéro du livreur (facultatif)</label>
+
+  <input id="telephone" type="tel"
+
+   placeholder="Votre numéro de téléphone">
+
+ </section>
+
+ <section class="card">
+
+  <h2>🛒 Choisissez vos produits</h2>
+
+  <div id="products"></div>
+
+  <div class="total">
+
+   <p>Nombre total d'articles</p>
+
+   <strong id="total">0</strong>
+
+   <p style="font-size:12px;color:#777;margin-top:5px">
+
+    Quantité totale de votre commande
+
+   </p>
+
+  </div>
+
+ </section>
+
+ <section class="card">
+
+  <h2>📝 Observation</h2>
+
+  <textarea id="observation" rows="3"
+
+   placeholder="Précisions sur votre commande (facultatif)"></textarea>
+
+ </section>
+
+ <button class="send" onclick="envoyerCommande()">
+
+  🟢 ENVOYER MA COMMANDE SUR WHATSAPP
+
+ </button>
+
+ <button class="reset" onclick="reinitialiser()">
+
+  Réinitialiser la commande
+
+ </button>
+
+ <footer>
+
+  Boulangerie SAMAKE © 2026<br>
+
+  Application réalisée par DIOM SERVICE
+
+ </footer>
+
+</main>
+
+<script>
+
+const produits = [
+
+ {nom:"Pain baguette",emoji:"🥖"},
+
+ {nom:"Pain complet",emoji:"🍞"},
+
+ {nom:"Croissant",emoji:"🥐"},
+
+ {nom:"Pain au lait",emoji:"🥯"},
+
+ {nom:"Panini",emoji:"🥪"}
+
+];
+
+const liste = document.getElementById("products");
+
+produits.forEach((p,i)=>{
+
+ const ligne=document.createElement("div");
+
+ ligne.className="product";
+
+ ligne.innerHTML=`
+
+  <div>
+
+   <strong>${p.emoji} ${p.nom}</strong>
+
+   <small>Quantité à commander</small>
+
+  </div>
+
+  <div class="quantity">
+
+   <button type="button" onclick="changer(${i},-1)">−</button>
+
+   <input id="q${i}" type="number" min="0"
+
+    value="0" onchange="verifier(${i})">
+
+   <button type="button" onclick="changer(${i},1)">+</button>
+
+  </div>`;
+
+ liste.appendChild(ligne);
+
+});
+
+function verifier(i){
+
+ let champ=document.getElementById("q"+i);
+
+ let valeur=parseInt(champ.value);
+
+ if(isNaN(valeur)||valeur<0)valeur=0;
+
+ champ.value=valeur;
+
+ calculer();
+
+}
+
+function changer(i,sens){
+
+ let champ=document.getElementById("q"+i);
+
+ let valeur=parseInt(champ.value)||0;
+
+ champ.value=Math.max(0,valeur+sens);
+
+ calculer();
+
+}
+
+function calculer(){
+
+ let total=0;
+
+ produits.forEach((p,i)=>{
+
+  total+=parseInt(document.getElementById("q"+i).value)||0;
+
+ });
+
+ document.getElementById("total").textContent=total;
+
+ return total;
+
+}
+
+function envoyerCommande(){
+
+ const nom=document.getElementById("livreur").value.trim();
+
+ const tel=document.getElementById("telephone").value.trim();
+
+ const observation=document.getElementById("observation").value.trim();
+
+ if(!nom){
+
+  alert("Veuillez renseigner votre nom.");
+
+  return;
+
+ }
+
+ let total=calculer();
+
+ if(total===0){
+
+  alert("Veuillez sélectionner au moins un produit.");
+
+  return;
+
+ }
+
+ let date=new Date().toLocaleString("fr-FR");
+
+ let message=
+
+ `🥖 *BOULANGERIE SAMAKE*
+
+ 📦 *NOUVELLE COMMANDE*
+
+ 👤 Livreur : ${nom}
+
+ 📞 Téléphone : ${tel||"Non renseigné"}
+
+ 📅 Date : ${date}
+
+ *DÉTAIL DE LA COMMANDE :*
+
+ `;
+
+ produits.forEach((p,i)=>{
+
+  let q=parseInt(document.getElementById("q"+i).value)||0;
+
+  if(q>0){
+
+   message+=`\n${p.emoji} ${p.nom} : ${q}`;
+
+  }
+
+ });
+
+ message+=`\n\n📊 *TOTAL : ${total} articles*`;
+
+ if(observation){
+
+  message+=`\n\n📝 Observation : ${observation}`;
+
+ }
+
+ message+="\n\nMerci de préparer cette commande.";
+
+ const numero="2250564369543";
+
+ const url="https://wa.me/"+numero+"?text="+encodeURIComponent(message);
+
+ window.open(url,"_blank");
+
+}
+
+function reinitialiser(){
+
+ document.getElementById("livreur").value="";
+
+ document.getElementById("telephone").value="";
+
+ document.getElementById("observation").value="";
+
+ produits.forEach((p,i)=>{
+
+  document.getElementById("q"+i).value=0;
+
+ });
+
+ calculer();
+
+}
+
+</script>
+
+</body>
+
+</html>
